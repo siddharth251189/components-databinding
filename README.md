@@ -241,3 +241,422 @@ We can assign the alias tocustom event same as we assigned the alias to custom p
   (BlueprintC)="onblueprintAdded($event)"
 ></app-addserver>
 ```
+
+## Understanding View Encapsulation
+
+To understand ViewEncapsulation in Angular, first we should understand about Shadow DOM. You can learn in detail about Shadow DOM here. Putting it in simple words, Shadow DOM brings Encapsulation in HTML Elements. Using the Shadow DOM , markup, styles, and behaviors are scoped to the element and do not clash with other nodes of the DOM. Shadow DOM is part of Web Components, which encapsulates styles and login of element.
+
+Angular Components are made up of three things:
+
+1. Component class
+2. Template
+3. Style
+
+Combination of these three makes an Angular component reusable across application. Theoretically, when you create a component, in some way you create a web component (Theoretically, Angular Components are not web components) to take advantage of Shadow DOM. You can also use Angular with browsers, which does not support Shadow DOM because Angular has its own emulation and it can emulate Shadow DOM.
+
+To emulate Shadow DOM and encapsulate styles, Angular provides there types of ViewEncapsulation. They are as follows:
+
+Emulated : No Shadow DOM,Style encapsulation,value:0
+Native: Shadow DOM,Style encapsulation,value:1
+None : No Shadow DOM,No Style encapsulation,value:2
+
+#### serverelement.component.ts
+
+```typescript
+import { Component, OnInit, Input, ViewEncapsulation } from "@angular/core";
+
+@Component({
+  selector: "app-serverelement",
+  templateUrl: "./serverelement.component.html",
+  styleUrls: ["./serverelement.component.css"],
+  encapsulation: ViewEncapsulation.None
+})
+export class ServerelementComponent implements OnInit {
+  @Input("svrElement") element: { type: string; name: string; content: string };
+  constructor() {}
+
+  ngOnInit() {}
+}
+```
+
+#### serverelement.component.css
+
+```css
+p {
+  color: blue;
+}
+label {
+  color: red;
+}
+```
+
+In this code we are using ViewEncapsulation.None so when we will run this code then all label will be red.
+
+If we will to change ViewEncapsulation.None to ViewEncapsulation.Emulated so all label will not be red.
+
+## Using Local References in Templates
+
+In the current examples we are using two way databinding but we have other way also for getting the value of our HTML input.
+
+We can get value by using local reference in template and @ViewChild in this section we will see how to usen local reference in template.
+
+Let's see how we can set local reference to our HTML input By using # we can set :
+
+```html
+<div class="form-group">
+  <label for="serverName">Server Name</label>
+  <input id="serverName" type="text" class="form-control" #serverNameInput />
+</div>
+<div class="form-group">
+  <label for="serverContent">Server Content</label>
+  <input
+    id="serverContent"
+    type="text"
+    class="form-control"
+    #serverContentInput
+  />
+</div>
+```
+
+In this code we removed the twoway databinding([(ngModel)]="newServerContent");
+
+Now we will see how to get value of input:
+
+#### addserver.component.html
+
+```html
+<div class="form-group">
+  <label for="serverName">Server Name</label>
+  <input id="serverName" type="text" class="form-control" #serverNameInput />
+</div>
+<div class="form-group">
+  <label for="serverContent">Server Content</label>
+  <input
+    id="serverContent"
+    type="text"
+    class="form-control"
+    #serverContentInput
+  />
+</div>
+<button
+  class="btn btn-primary"
+  (click)="onServerAdd(serverNameInput, serverContentInput)"
+>
+  Add Server</button
+>&nbsp;
+<button
+  class="btn btn-primary"
+  (click)="onBlueprintAdd(serverNameInput, serverContentInput)"
+>
+  Add Blueprint
+</button>
+```
+
+In abow code we are setting the local refrence and passing them to onServerAdd and on onBlueprintAdd as argument/parameter.
+
+Now in typescript file we will use these parameter for accessing the input value.
+
+```typescript
+  onServerAdd(serverNameInput: HTMLInputElement, serverContentInput: HTMLInputElement) {
+
+    this.serverCreated.emit({
+      serverName: serverNameInput.value,
+      serverContent: serverContentInput.value
+    })
+  }
+  onBlueprintAdd(serverNameInput: HTMLInputElement, serverContentInput: HTMLInputElement) {
+    this.blueprintCreated.emit({
+      serverName: serverNameInput.value,
+      serverContent: serverContentInput.value
+    })
+
+  }
+```
+
+So in typescript we can access the value of inputs by value method like abow code.
+
+## @ViewChild() in Angular 8+
+
+We can access value of input by @Viewchild also.
+
+For useing @Viewchild we need to import it first from @angular/core.In this metod we will need local refrence in template file.
+
+```typescript
+@ViewChild('serverNameInput', { static: true }) serverNameInput;
+@ViewChild('serverContentInput', { static: true }) serverContentInput;
+```
+
+If we will console our serverNameInput so we will find a ElementRef Object.
+
+Now we have ElementRef but we are not able to access ElementRef so for access the ElementRef we need to import ElementRef from @angular/core and assign serverNameInput and serverContentInput to ElementRef type.
+
+```typescript
+  @ViewChild('serverNameInput', { static: true }) serverNameInput: ElementRef;
+  @ViewChild('serverContentInput', { static: true }) serverContentInput: ElementRef;
+```
+
+This ElementRef have nativeElement property and this nativElement have value property so by accessing nativeElement and it's value we can access Input value.
+let's see the how we are getting the value of InputElement.
+
+#### addserver.component.html
+
+```html
+<div class="form-group">
+  <label for="serverName">Server Name</label>
+  <input id="serverName" type="text" class="form-control" #serverNameInput />
+</div>
+<div class="form-group">
+  <label for="serverContent">Server Content</label>
+  <input
+    id="serverContent"
+    type="text"
+    class="form-control"
+    #serverContentInput
+  />
+</div>
+<button class="btn btn-primary" (click)="onServerAdd()">
+  Add Server</button
+>&nbsp;
+<button class="btn btn-primary" (click)="onBlueprintAdd()">
+  Add Blueprint
+</button>
+```
+
+#### addserver.component.ts
+
+```typescript
+import {
+  Component,
+  OnInit,
+  Input,
+  EventEmitter,
+  Output,
+  ViewChild,
+  ElementRef
+} from "@angular/core";
+
+@Component({
+  selector: "app-addserver",
+  templateUrl: "./addserver.component.html",
+  styleUrls: ["./addserver.component.css"]
+})
+export class AddserverComponent implements OnInit {
+  @Output("ServerC") serverCreated = new EventEmitter<{
+    serverName: string;
+    serverContent: string;
+  }>();
+  @Output("BlueprintC") blueprintCreated = new EventEmitter<{
+    serverName: string;
+    serverContent: string;
+  }>();
+  // newServerName = '';
+  // newServerContent = '';
+  @ViewChild("serverNameInput", { static: true }) serverNameInput: ElementRef;
+  @ViewChild("serverContentInput", { static: true })
+  serverContentInput: ElementRef;
+  constructor() {}
+
+  ngOnInit() {}
+  onServerAdd() {
+    this.serverCreated.emit({
+      serverName: this.serverNameInput.nativeElement.value,
+      serverContent: this.serverContentInput.nativeElement.value
+    });
+  }
+  onBlueprintAdd() {
+    this.blueprintCreated.emit({
+      serverName: this.serverNameInput.nativeElement.value,
+      serverContent: this.serverContentInput.nativeElement.value
+    });
+  }
+}
+```
+
+## Projecting Content into Components with ng-content
+
+Currently we have our serverElement component template like this :
+
+#### serverelement.component.html
+
+```html
+<div class="panel panel-default">
+  <div class="panel-heading">{{ element.name }}</div>
+  <div class="panel-body">
+    <p>
+      <strong style="color: red;" *ngIf="element.type === 'Server'"
+        >{{ element.content }}</strong
+      >
+      <em *ngIf="element.type === 'Blueprint'">{{ element.content }}</em>
+    </p>
+  </div>
+</div>
+```
+
+But we need our html content in component like below:
+
+#### app.component.html
+
+```html
+<div class="container">
+  <p>Add server</p>
+  <div class="row">
+    <div class="col-lg-12">
+      <app-addserver
+        (ServerC)="onServerCreated($event)"
+        (BlueprintC)="onblueprintAdded($event)"
+      ></app-addserver>
+      <hr />
+      <app-serverelement
+        *ngFor="let serverElement of serverElements"
+        [svrElement]="serverElement"
+      >
+        <p>
+          <strong style="color: red;" *ngIf="serverElement.type === 'Server'"
+            >{{ serverElement.content }}</strong
+          >
+          <em *ngIf="serverElement.type === 'Blueprint'"
+            >{{ serverElement.content }}</em
+          >
+        </p>
+      </app-serverelement>
+    </div>
+  </div>
+</div>
+```
+
+In this case we have removed some html content from our serverelement.component.html
+
+#### serverelement.component.html
+
+```html
+<div class="panel panel-default">
+  <div class="panel-heading">{{ element.name }}</div>
+  <div class="panel-body"></div>
+</div>
+```
+
+In this case the panel will append but we will not get data from our form becouse angular always ignore html content beetween opening and closing component tag.But we can change this behaveour with help of <ng-content> tag.
+
+after adding <ng-content> </ng-content> we will get data like before so our updated code is here:
+
+#### serverelement.component.html
+
+```html
+<div class="panel panel-default">
+  <div class="panel-heading">{{ element.name }}</div>
+  <div class="panel-body">
+    <ng-content> </ng-content>
+  </div>
+</div>
+```
+
+#### app.component.html
+
+```html
+<div class="container">
+  <p>Add server</p>
+  <div class="row">
+    <div class="col-lg-12">
+      <app-addserver
+        (ServerC)="onServerCreated($event)"
+        (BlueprintC)="onblueprintAdded($event)"
+      ></app-addserver>
+      <hr />
+      <app-serverelement
+        *ngFor="let serverElement of serverElements"
+        [svrElement]="serverElement"
+      >
+        <p>
+          <strong style="color: red;" *ngIf="serverElement.type === 'Server'"
+            >{{ serverElement.content }}</strong
+          >
+          <em *ngIf="serverElement.type === 'Blueprint'"
+            >{{ serverElement.content }}</em
+          >
+        </p>
+      </app-serverelement>
+    </div>
+  </div>
+</div>
+```
+
+In this case we have removed some html content from our serverelement.component.html
+
+#### serverelement.component.html
+
+```html
+<div class="panel panel-default">
+  <div class="panel-heading">{{ element.name }}</div>
+  <div class="panel-body"></div>
+</div>
+```
+
+#### app.component.html
+
+```html
+<div class="container">
+  <p>Add server</p>
+  <div class="row">
+    <div class="col-lg-12">
+      <app-addserver
+        (ServerC)="onServerCreated($event)"
+        (BlueprintC)="onblueprintAdded($event)"
+      ></app-addserver>
+      <hr />
+      <app-serverelement
+        *ngFor="let serverElement of serverElements"
+        [svrElement]="serverElement"
+      >
+        <p>
+          <strong style="color: red;" *ngIf="serverElement.type === 'Server'"
+            >{{ serverElement.content }}</strong
+          >
+          <em *ngIf="serverElement.type === 'Blueprint'"
+            >{{ serverElement.content }}</em
+          >
+        </p>
+      </app-serverelement>
+    </div>
+  </div>
+</div>
+```
+
+## Understanding the Component Lifecycle
+
+Angular have 8 lifecyle hooks:
+
+1. ngOnChanges()
+   Used in pretty much any component that has an input.
+   Called whenever an input value changes
+   Is called the first time before ngOnInit
+2. ngOnInit()
+   Used to initialize data in a component.
+   Called after input values are set when a component is initialized.
+   Added to every component by default by the Angular CLI.
+   Called only once
+3. ngDoCheck()
+   Called during all change detection runs
+   A run through the view by Angular to update/detect changes
+4. ngAfterContentInit()
+   Called only once after first ngDoCheck()
+   Called after the first run through of initializing content
+5. ngAfterContentChecked()
+   Called after every ngDoCheck()
+   Waits till after ngAfterContentInit() on first run through
+6. ngAfterViewInit()
+   Called after Angular initializes component and child component content.
+   Called only once after view is initialized
+7. ngAfterViewChecked()
+   Called after all the content is initialized and checked. (Component and child components).
+   First call is after ngAfterViewInit()
+   Called after every ngAfterContentChecked() call is completed
+8. ngOnDestroy()
+   Used to clean up any necessary code when a component is removed from the DOM.
+   Fairly often used to unsubscribe from things like services.
+   Called only once just before component is removed from the DOM.
+
+## Lifecycle Hooks and Template Access
+
+## @ContentChild() in Angular 8+
+
+## Getting Access to ng-content with @ContentChild

@@ -625,35 +625,50 @@ In this case we have removed some html content from our serverelement.component.
 
 Angular have 8 lifecyle hooks:
 
-1. ngOnChanges()
-   1.1. Used in pretty much any component that has an input.
-   1.2 Called whenever an input value changes
-   1.3 Is called the first time before ngOnInit
-2. ngOnInit()
-   Used to initialize data in a component.
-   Called after input values are set when a component is initialized.
-   Added to every component by default by the Angular CLI.
-   Called only once
-3. ngDoCheck()
-   Called during all change detection runs
-   A run through the view by Angular to update/detect changes
-4. ngAfterContentInit()
-   Called only once after first ngDoCheck()
-   Called after the first run through of initializing content
-5. ngAfterContentChecked()
-   Called after every ngDoCheck()
-   Waits till after ngAfterContentInit() on first run through
-6. ngAfterViewInit()
-   Called after Angular initializes component and child component content.
-   Called only once after view is initialized
-7. ngAfterViewChecked()
-   Called after all the content is initialized and checked. (Component and child components).
-   First call is after ngAfterViewInit()
-   Called after every ngAfterContentChecked() call is completed
-8. ngOnDestroy()
-   Used to clean up any necessary code when a component is removed from the DOM.
-   Fairly often used to unsubscribe from things like services.
-   Called only once just before component is removed from the DOM.
+##### ngOnChanges()
+
+1. Used in pretty much any component that has an input.
+2. Called whenever an input value changes
+3. Is called the first time before ngOnInit
+
+##### ngOnInit()
+
+1. Used to initialize data in a component.
+2. Called after input values are set when a component is initialized.
+3. Added to every component by default by the Angular CLI.
+4. Called only once
+
+##### ngDoCheck()
+
+1. Called during all change detection runs
+2. A run through the view by Angular to update/detect changes
+
+##### ngAfterContentInit()
+
+1. Called only once after first ngDoCheck()
+2. Called after the first run through of initializing content
+
+##### ngAfterContentChecked()
+
+1. Called after every ngDoCheck()
+2. Waits till after ngAfterContentInit() on first run through
+
+##### ngAfterViewInit()
+
+3. Called after Angular initializes component and child component content.
+4. Called only once after view is initialized
+
+##### ngAfterViewChecked()
+
+1. Called after all the content is initialized and checked. (Component and child components).
+2. First call is after ngAfterViewInit()
+3. Called after every ngAfterContentChecked() call is completed
+
+##### ngOnDestroy()
+
+1. Used to clean up any necessary code when a component is removed from the DOM.
+2. Fairly often used to unsubscribe from things like services.
+3. Called only once just before component is removed from the DOM.
 
 ## Lifecycle Hooks and Template Access
 

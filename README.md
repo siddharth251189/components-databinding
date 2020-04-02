@@ -626,9 +626,9 @@ In this case we have removed some html content from our serverelement.component.
 Angular have 8 lifecyle hooks:
 
 1. ngOnChanges()
-   Used in pretty much any component that has an input.
-   Called whenever an input value changes
-   Is called the first time before ngOnInit
+   1.1. Used in pretty much any component that has an input.
+   1.2 Called whenever an input value changes
+   1.3 Is called the first time before ngOnInit
 2. ngOnInit()
    Used to initialize data in a component.
    Called after input values are set when a component is initialized.

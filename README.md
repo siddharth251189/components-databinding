@@ -117,7 +117,7 @@ For building custom events we need Output decorator and EventEmitter.
 
 In this example we are sending the data from AddserverComponent to AppComponent and store the data in serverElements array.
 
-So lets see how can we achive our goal.
+So lets see how can we achieve our goal.
 
 In this example we are creating two custom events first serverCreated is and second is blueprintCreated.
 
@@ -256,9 +256,9 @@ Combination of these three makes an Angular component reusable across applicatio
 
 To emulate Shadow DOM and encapsulate styles, Angular provides there types of ViewEncapsulation. They are as follows:
 
-Emulated : No Shadow DOM,Style encapsulation,value:0
-Native: Shadow DOM,Style encapsulation,value:1
-None : No Shadow DOM,No Style encapsulation,value:2
+Emulated : No Shadow DOM, Style encapsulation,value:0
+Native: Shadow DOM, Style encapsulation,value:1
+None : No Shadow DOM, No Style encapsulation,value:2
 
 #### serverelement.component.ts
 
@@ -623,7 +623,7 @@ In this case we have removed some html content from our serverelement.component.
 
 ## Understanding the Component Lifecycle
 
-Angular have 8 lifecyle hooks:
+Angular have 8 Lifecyle hooks:
 
 ##### ngOnChanges()
 
